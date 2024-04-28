@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Load environment variables from .env file
+set -o allexport
+source .env
+set +o allexport
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '.ipynb$')
+
+if [ -n "$FILES" ]; then
+  echo "Cleaning Jupyter notebooks:"
+  echo $HTML_DIR
+
+  for FILE in $FILES; do
+    echo "Replacing sensitive data in $FILE"
+    sed -i '' -e "s#$HTML_DIR#[REDACTED]/#g" $FILE
+    git add $FILE
+  done
+fi
